@@ -334,7 +334,6 @@ int compare_hands(Card *player1, Card *player2, Card *community) {
 int main(int argc, char **argv) {
     int players = parse_players(argc, argv);
 
-    // Remove the following line if you intend to use the `players` variable
     (void) players;
 
     char input[1024];
