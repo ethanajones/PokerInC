@@ -125,16 +125,22 @@ bool is_flush(Card *cards, int len) {
 }
 
 bool is_straight(Card *cards, int len) {
-    for (int i = 0; i < len - 1; i++) {
-        if (cards[i].value != cards[i + 1].value + 1) {
-            // Handle the case where Ace acts as the lowest card (A, 2, 3, 4, 5)
-            if (i == 0 && cards[i].value == 14 && cards[i + 1].value == 5) {
-                continue;
+    // Check for Ace-low straight (A, 2, 3, 4, 5)
+    if (cards[0].value == 14 && cards[1].value == 5) {
+        for (int i = 1; i < len - 1; i++) {
+            if (cards[i].value != cards[i + 1].value + 1) {
+                return false;
             }
-            return false;
         }
+        return true;
+    } else {
+        for (int i = 0; i < len - 1; i++) {
+            if (cards[i].value != cards[i + 1].value + 1) {
+                return false;
+            }
+        }
+        return true;
     }
-    return true;
 }
 
 
@@ -183,7 +189,9 @@ Hand evaluate_hand(Card *cards, int len) {
                         }
 
                         // Check for four of a kind
-                        int four_of_a_kind_value = is_n_of_a_kind(cards, len, 4);
+                        // Check for four of a kind
+                        int four_of_a_kind_value = is_n_of_a_kind(selected_cards, 5, 4);
+
                         if (four_of_a_kind_value) {
                             hand.rank = FOUR_OF_A_KIND;
                             hand.tiebreakers[0] = four_of_a_kind_value;
@@ -191,7 +199,8 @@ Hand evaluate_hand(Card *cards, int len) {
                         }
 
                         // Check for full house
-                        int full_house_value = is_full_house(cards, len);
+                        int full_house_value = is_full_house(selected_cards, 5);
+
                         if (full_house_value) {
                             hand.rank = FULL_HOUSE;
                             hand.tiebreakers[0] = full_house_value;
@@ -199,7 +208,8 @@ Hand evaluate_hand(Card *cards, int len) {
                         }
 
                         // Check for flush
-                        if (is_flush(cards, len)) {
+                        if (is_flush(selected_cards, 5)) {
+
                             hand.rank = FLUSH;
                             for (int i = 0; i < 5; i++) {
                                 hand.tiebreakers[i] = cards[i].value;
@@ -208,14 +218,14 @@ Hand evaluate_hand(Card *cards, int len) {
                         }
 
                         // Check for straight
-                        if (is_straight(cards, len)) {
+                        if (is_straight(selected_cards, 5)) {
                             hand.rank = STRAIGHT;
-                            hand.tiebreakers[0] = cards[0].value;
+                            hand.tiebreakers[0] = selected_cards[0].value;
                             return hand;
                         }
 
                         // Check for three of a kind
-                        int three_of_a_kind_value = is_n_of_a_kind(cards, len, 3);
+                        int three_of_a_kind_value = is_n_of_a_kind(selected_cards, 5, 3);
                         if (three_of_a_kind_value) {
                             hand.rank = THREE_OF_A_KIND;
                             hand.tiebreakers[0] = three_of_a_kind_value;
@@ -223,12 +233,12 @@ Hand evaluate_hand(Card *cards, int len) {
                         }
 
                         // Check for two pair
-                        int first_pair_value = is_n_of_a_kind(cards, len, 2);
+                        int first_pair_value = is_n_of_a_kind(selected_cards, 5, 2);
                         if (first_pair_value) {
                             int second_pair_value = 0;
-                            for (int i = 0; i < len - 1; i++) {
-                                if (cards[i].value != first_pair_value && cards[i].value == cards[i + 1].value) {
-                                    second_pair_value = cards[i].value;
+                            for (int i = 0; i < 5 - 1; i++) {
+                                if (selected_cards[i].value != first_pair_value && selected_cards[i].value == selected_cards[i + 1].value) {
+                                    second_pair_value = selected_cards[i].value;
                                     break;
                                 }
                             }
@@ -242,10 +252,18 @@ Hand evaluate_hand(Card *cards, int len) {
 
                         // Check for pair
                         if (first_pair_value) {
+                            int remaining_card = 0;
+                            for (int i = 0; i < 5; i++) {
+                                if (selected_cards[i].value != first_pair_value) {
+                                    remaining_card = selected_cards[i].value;
+                                    break;
+                                }
+                            }
                             hand.rank = PAIR;
                             hand.tiebreakers[0] = first_pair_value;
-                            return hand;
+                            hand.tiebreakers[1] = remaining_card;
                         }
+
 
                         // If no hand was found, default to high card
                         if (hand.rank == HIGH_CARD) {
