@@ -69,18 +69,43 @@ static int parse_players (int argc, char **argv)
 int main(int argc, char **argv)
 {
     int players = parse_players(argc, argv);
-    printf("Hello World");
 
-    /* TODO (BONUS):
-     * If you intend to implement the bonus, «REMOVE» the following line and use
-     * the ‹players› variable. It either contains the amount of players, or 0 on
-     * invalid program arguments. The validation is left up to you. */
-//    (void) players;
+    // Remove the following line if you intend to use the `players` variable
+    (void) players;
 
+    char input[1024];
+    Card player1[2], player2[2], community[5];
 
-    /* TODO:
-     * Your implementation goes here.
-     * Feel free to define your own functions. */
+    while (fgets(input, sizeof(input), stdin) != NULL) {
+        sscanf(input, " %c%c %c%c", &player1[0].value, &player1[0].suit, &player1[1].value, &player1[1].suit);
+        player1[0].value = card_value(player1[0].value);
+        player1[1].value = card_value(player1[1].value);
 
+        fgets(input, sizeof(input), stdin);
+        sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value, &player2[1].suit);
+        player2[0].value = card_value(player2[0].value);
+        player2[1].value = card_value(player2[1].value);
+
+        fgets(input, sizeof(input), stdin);
+        sscanf(input, " %c%c %c%c %c%c %c%c %c%c",
+               &community[0].value, &community[0].suit,
+               &community[1].value, &community[1].suit,
+               &community[2].value, &community[2].suit,
+               &community[3].value, &community[3].suit,
+               &community[4].value, &community[4].suit);
+
+        for (int i = 0; i < 5; i++) {
+            community[i].value = card_value(community[i].value);
+        }
+
+        int result = compare_hands(player1, player2, community);
+        if (result > 0) {
+            printf("Player 1\n");
+        } else if (result < 0) {
+            printf("Player 2\n");
+        } else {
+            printf("Draw\n");
+        }
+    }
     return 0;
 }
