@@ -1,4 +1,0 @@
-/Users/ethan/Documents/Coding/PokerInC/cmake-build-debug/CMakeFiles/poker-tests.dir
-/Users/ethan/Documents/Coding/PokerInC/cmake-build-debug/CMakeFiles/poker.dir
-/Users/ethan/Documents/Coding/PokerInC/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/ethan/Documents/Coding/PokerInC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
