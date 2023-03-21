@@ -54,8 +54,7 @@ int compare_hands(Card *player1, Card *player2, Card *community);
 
 /* Parse the number of players at the table for the bonus extension.
  * IMPORTANT: Do not modify this function! */
-static int parse_players (int argc, char **argv)
-{
+static int parse_players(int argc, char **argv) {
     switch (argc) {
         case 1:
             return 2;
@@ -167,7 +166,15 @@ int is_full_house(Card *cards, int len) {
 
 Hand evaluate_hand(Card *cards, int len) {
     sort_cards(cards, len);
-    Hand hand = {0};
+    Hand best_hand = {0};
+
+    for (int a = 0; a < len - 4; a++) {
+        for (int b = a + 1; b < len - 3; b++) {
+            for (int c = b + 1; c < len - 2; c++) {
+                for (int d = c + 1; d < len - 1; d++) {
+                    for (int e = d + 1; e < len; e++) {
+                        Card selected_cards[] = {cards[a], cards[b], cards[c], cards[d], cards[e]};
+                        Hand hand = {0};
 
                         // Check for straight flush
                         if (is_straight(selected_cards, 5) && is_flush(selected_cards, 5)) {
@@ -247,15 +254,33 @@ Hand evaluate_hand(Card *cards, int len) {
                             }
                         }
 
-    return hand;
+                        // Update best_hand if the current hand is better
+                        if (hand.rank > best_hand.rank) {
+                            best_hand = hand;
+                        } else if (hand.rank == best_hand.rank) {
+                            for (int i = 0; i < 5; i++) {
+                                if (hand.tiebreakers[i] > best_hand.tiebreakers[i]) {
+                                    best_hand = hand;
+                                    break;
+                                } else if (hand.tiebreakers[i] < best_hand.tiebreakers[i]) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return best_hand;
 }
 
 int compare_hands(Card *player1, Card *player2, Card *community) {
     Card combined1[7], combined2[7];
-    memcpy(combined1, player1, sizeof(player1) * 2);
-    memcpy(combined1 + 2, community, sizeof(community) * 5);
-    memcpy(combined2, player2, sizeof(player2) * 2);
-    memcpy(combined2 + 2, community, sizeof(community) * 5);
+    memcpy(combined1, player1, sizeof(Card) * 2);
+    memcpy(combined1 + 2, community, sizeof(Card) * 5);
+    memcpy(combined2, player2, sizeof(Card) * 2);
+    memcpy(combined2 + 2, community, sizeof(Card) * 5);
 
     Hand hand1 = evaluate_hand(combined1, 7);
     Hand hand2 = evaluate_hand(combined2, 7);
