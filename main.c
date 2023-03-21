@@ -169,84 +169,83 @@ Hand evaluate_hand(Card *cards, int len) {
     sort_cards(cards, len);
     Hand hand = {0};
 
-    // Check for straight flush
-    if (is_straight(cards, len) && is_flush(cards, len)) {
-        hand.rank = STRAIGHT_FLUSH;
-        hand.tiebreakers[0] = cards[0].value;
-        return hand;
-    }
+                        // Check for straight flush
+                        if (is_straight(selected_cards, 5) && is_flush(selected_cards, 5)) {
+                            hand.rank = STRAIGHT_FLUSH;
+                            hand.tiebreakers[0] = selected_cards[0].value;
+                        }
 
-    // Check for four of a kind
-    int four_of_a_kind_value = is_n_of_a_kind(cards, len, 4);
-    if (four_of_a_kind_value) {
-        hand.rank = FOUR_OF_A_KIND;
-        hand.tiebreakers[0] = four_of_a_kind_value;
-        return hand;
-    }
+                        // Check for four of a kind
+                        int four_of_a_kind_value = is_n_of_a_kind(cards, len, 4);
+                        if (four_of_a_kind_value) {
+                            hand.rank = FOUR_OF_A_KIND;
+                            hand.tiebreakers[0] = four_of_a_kind_value;
+                            return hand;
+                        }
 
-    // Check for full house
-    int full_house_value = is_full_house(cards, len);
-    if (full_house_value) {
-        hand.rank = FULL_HOUSE;
-        hand.tiebreakers[0] = full_house_value;
-        return hand;
-    }
+                        // Check for full house
+                        int full_house_value = is_full_house(cards, len);
+                        if (full_house_value) {
+                            hand.rank = FULL_HOUSE;
+                            hand.tiebreakers[0] = full_house_value;
+                            return hand;
+                        }
 
-    // Check for flush
-    if (is_flush(cards, len)) {
-        hand.rank = FLUSH;
-        for (int i = 0; i < 5; i++) {
-            hand.tiebreakers[i] = cards[i].value;
-        }
-        return hand;
-    }
+                        // Check for flush
+                        if (is_flush(cards, len)) {
+                            hand.rank = FLUSH;
+                            for (int i = 0; i < 5; i++) {
+                                hand.tiebreakers[i] = cards[i].value;
+                            }
+                            return hand;
+                        }
 
-    // Check for straight
-    if (is_straight(cards, len)) {
-        hand.rank = STRAIGHT;
-        hand.tiebreakers[0] = cards[0].value;
-        return hand;
-    }
+                        // Check for straight
+                        if (is_straight(cards, len)) {
+                            hand.rank = STRAIGHT;
+                            hand.tiebreakers[0] = cards[0].value;
+                            return hand;
+                        }
 
-    // Check for three of a kind
-    int three_of_a_kind_value = is_n_of_a_kind(cards, len, 3);
-    if (three_of_a_kind_value) {
-        hand.rank = THREE_OF_A_KIND;
-        hand.tiebreakers[0] = three_of_a_kind_value;
-        return hand;
-    }
+                        // Check for three of a kind
+                        int three_of_a_kind_value = is_n_of_a_kind(cards, len, 3);
+                        if (three_of_a_kind_value) {
+                            hand.rank = THREE_OF_A_KIND;
+                            hand.tiebreakers[0] = three_of_a_kind_value;
+                            return hand;
+                        }
 
-    // Check for two pair
-    int first_pair_value = is_n_of_a_kind(cards, len, 2);
-    if (first_pair_value) {
-        int second_pair_value = 0;
-        for (int i = 0; i < len - 1; i++) {
-            if (cards[i].value != first_pair_value && cards[i].value == cards[i + 1].value) {
-                second_pair_value = cards[i].value;
-                break;
-            }
-        }
-        if (second_pair_value) {
-            hand.rank = TWO_PAIR;
-            hand.tiebreakers[0] = first_pair_value;
-            hand.tiebreakers[1] = second_pair_value;
-            return hand;
-        }
-    }
+                        // Check for two pair
+                        int first_pair_value = is_n_of_a_kind(cards, len, 2);
+                        if (first_pair_value) {
+                            int second_pair_value = 0;
+                            for (int i = 0; i < len - 1; i++) {
+                                if (cards[i].value != first_pair_value && cards[i].value == cards[i + 1].value) {
+                                    second_pair_value = cards[i].value;
+                                    break;
+                                }
+                            }
+                            if (second_pair_value) {
+                                hand.rank = TWO_PAIR;
+                                hand.tiebreakers[0] = first_pair_value;
+                                hand.tiebreakers[1] = second_pair_value;
+                                return hand;
+                            }
+                        }
 
-    // Check for pair
-    if (first_pair_value) {
-        hand.rank = PAIR;
-        hand.tiebreakers[0] = first_pair_value;
-        return hand;
-    }
+                        // Check for pair
+                        if (first_pair_value) {
+                            hand.rank = PAIR;
+                            hand.tiebreakers[0] = first_pair_value;
+                            return hand;
+                        }
 
-    // If no hand was found, default to high card
-    if (hand.rank == HIGH_CARD) {
-        for (int i = 0; i < 5; i++) {
-            hand.tiebreakers[i] = cards[i].value;
-        }
-    }
+                        // If no hand was found, default to high card
+                        if (hand.rank == HIGH_CARD) {
+                            for (int i = 0; i < 5; i++) {
+                                hand.tiebreakers[i] = cards[i].value;
+                            }
+                        }
 
     return hand;
 }
@@ -287,12 +286,14 @@ int main(int argc, char **argv) {
     Card player1[2], player2[2], community[5];
 
     while (fgets(input, sizeof(input), stdin) != NULL) {
-        sscanf(input, " %c%c %c%c", &player1[0].value, &player1[0].suit, &player1[1].value, &player1[1].suit);
+        sscanf(input, " %c%c %c%c", &player1[0].value, &player1[0].suit, &player1[1].value,
+               &player1[1].suit);
         player1[0].value = card_value(player1[0].value);
         player1[1].value = card_value(player1[1].value);
 
         fgets(input, sizeof(input), stdin);
-        sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value, &player2[1].suit);
+        sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value,
+               &player2[1].suit);
         player2[0].value = card_value(player2[0].value);
         player2[1].value = card_value(player2[1].value);
 
