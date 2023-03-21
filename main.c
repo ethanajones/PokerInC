@@ -21,25 +21,35 @@ TC KH
 3H 9D
 9C QD JS 3C 2H
 
-Test case 2: Player 2 wins with a flush
+Test case 2: Player 2 wins with a straight
+3H 9D
+TC KH
+9C QD JS 3C 2H
+
+Test case 3: Player 1 wins with a straight
 8S 9S
 KH QS
 2S 7S 4S 5D 6D
 
-Test case 3: Draw with a full house for both players
+Test case 4: Draw with a full house for both players
 KC KD
 KH KS
 QC QD QS 2C 2S
 
-Test case 4: Player 1 wins with a higher pair
+Test case 5: Player 1 wins with a higher pair
 AC 5D
 KC 9C
 AD 3H 6D 8C 7H
 
-Test case 5: Player 2 wins with a two-pair
-8C 8D
+Test case 6: Player 2 wins with a two-pair
 6H 6D
+8C 8D
 7H 7D 9S 2C 3S
+
+Test case 7: Player 2 wins with a higher pair
+KC 9C
+AC 5D
+AD 3H 6D 8C 7H
  */
 
 typedef struct {
@@ -209,13 +219,16 @@ Hand evaluate_hand(Card *cards, int len) {
 
                         // Check for flush
                         if (is_flush(selected_cards, 5)) {
-
                             hand.rank = FLUSH;
                             for (int i = 0; i < 5; i++) {
-                                hand.tiebreakers[i] = cards[i].value;
+                                hand.tiebreakers[i] = selected_cards[i].value;
                             }
-                            return hand;
+                            if (hand.rank > best_hand.rank) {
+                                best_hand = hand;
+                            }
+                            continue;
                         }
+
 
                         // Check for straight
                         if (is_straight(selected_cards, 5)) {
@@ -237,7 +250,8 @@ Hand evaluate_hand(Card *cards, int len) {
                         if (first_pair_value) {
                             int second_pair_value = 0;
                             for (int i = 0; i < 5 - 1; i++) {
-                                if (selected_cards[i].value != first_pair_value && selected_cards[i].value == selected_cards[i + 1].value) {
+                                if (selected_cards[i].value != first_pair_value &&
+                                    selected_cards[i].value == selected_cards[i + 1].value) {
                                     second_pair_value = selected_cards[i].value;
                                     break;
                                 }
@@ -252,25 +266,23 @@ Hand evaluate_hand(Card *cards, int len) {
 
                         // Check for pair
                         if (first_pair_value) {
-                            int remaining_card = 0;
-                            for (int i = 0; i < 5; i++) {
-                                if (selected_cards[i].value != first_pair_value) {
-                                    remaining_card = selected_cards[i].value;
-                                    break;
-                                }
-                            }
+                            int k = 1;
                             hand.rank = PAIR;
                             hand.tiebreakers[0] = first_pair_value;
-                            hand.tiebreakers[1] = remaining_card;
+                            for (int i = 0; i < 5; i++) {
+                                if (selected_cards[i].value != first_pair_value) {
+                                    hand.tiebreakers[k++] = selected_cards[i].value;
+                                }
+                            }
                         }
-
 
                         // If no hand was found, default to high card
                         if (hand.rank == HIGH_CARD) {
-                            for (int i = 0; i < 5; i++) {
-                                hand.tiebreakers[i] = cards[i].value;
+                            for (int j = 0; j < 5; j++) {
+                                hand.tiebreakers[j] = selected_cards[j].value;
                             }
                         }
+
 
                         // Update best_hand if the current hand is better
                         if (hand.rank > best_hand.rank) {
