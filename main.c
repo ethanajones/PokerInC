@@ -377,9 +377,6 @@ int main(int argc, char **argv) {
         community[3].value = card_value(value8);
         community[4].value = card_value(value9);
 
-        for (int i = 0; i < 5; i++) {
-            community[i].value = card_value(community[i].value);
-        }
         if (!validate_cards(player1, 2) || !validate_cards(player2, 2) || !validate_cards(community, 5)) {
             fprintf(stderr, "invalid card");
             return -1;
