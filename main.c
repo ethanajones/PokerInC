@@ -349,25 +349,33 @@ int main(int argc, char **argv) {
     Card player1[2], player2[2], community[5];
 
     while (fgets(input, sizeof(input), stdin) != NULL) {
-        sscanf(input, " %c%c %c%c", &player1[0].value, &player1[0].suit, &player1[1].value,
-               &player1[1].suit);
-        player1[0].value = card_value(player1[0].value);
-        player1[1].value = card_value(player1[1].value);
+        char value1, value2;
+        sscanf(input, " %c%c %c%c", &value1, &player1[0].suit, &value2, &player1[1].suit);
+        player1[0].value = card_value(value1);
+        player1[1].value = card_value(value2);
 
 
         fgets(input, sizeof(input), stdin);
-        sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value,
-               &player2[1].suit);
-        player2[0].value = card_value(player2[0].value);
-        player2[1].value = card_value(player2[1].value);
+        char value3, value4;
+        sscanf(input, " %c%c %c%c", &value3, &player2[0].suit, &value4, &player2[1].suit);
+        player2[0].value = card_value(value3);
+        player2[1].value = card_value(value4);
+
 
         fgets(input, sizeof(input), stdin);
+        char value5, value6, value7, value8, value9;
         sscanf(input, " %c%c %c%c %c%c %c%c %c%c",
-               &community[0].value, &community[0].suit,
-               &community[1].value, &community[1].suit,
-               &community[2].value, &community[2].suit,
-               &community[3].value, &community[3].suit,
-               &community[4].value, &community[4].suit);
+               &value5, &community[0].suit,
+               &value6, &community[1].suit,
+               &value7, &community[2].suit,
+               &value8, &community[3].suit,
+               &value9, &community[4].suit);
+
+        community[0].value = card_value(value5);
+        community[1].value = card_value(value6);
+        community[2].value = card_value(value7);
+        community[3].value = card_value(value8);
+        community[4].value = card_value(value9);
 
         for (int i = 0; i < 5; i++) {
             community[i].value = card_value(community[i].value);
