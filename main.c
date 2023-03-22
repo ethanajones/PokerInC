@@ -96,6 +96,15 @@ int card_value(char card_value) {
     }
 }
 
+bool validate_cards(Card *cards, int len) {
+    for (int i = 0; i < len; i++) {
+        if (cards[i].value < 2 || cards[i].value > 14) {
+            return false;
+        }
+    }
+    return true;
+}
+
 typedef enum {
     HIGH_CARD,
     PAIR,
@@ -345,6 +354,7 @@ int main(int argc, char **argv) {
         player1[0].value = card_value(player1[0].value);
         player1[1].value = card_value(player1[1].value);
 
+
         fgets(input, sizeof(input), stdin);
         sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value,
                &player2[1].suit);
@@ -361,6 +371,10 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < 5; i++) {
             community[i].value = card_value(community[i].value);
+        }
+        if (!validate_cards(player1, 2) || !validate_cards(player2, 2) || !validate_cards(community, 5)) {
+            fprintf(stderr, "invalid card");
+            return -1;
         }
 
         int result = compare_hands(player1, player2, community);
