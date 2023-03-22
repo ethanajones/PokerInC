@@ -345,15 +345,32 @@ int main(int argc, char **argv) {
 
     (void) players;
 
-    char input[1024];
-    Card player1[2], player2[2], community[5];
+    int* input = malloc(1024 * sizeof(char));
+    if (input == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    Card* player1 = malloc(2 * sizeof(Card));
+    if (player1 == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    Card* player2 = malloc(2 * sizeof(Card));
+    if (player2 == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    Card* community = malloc(5 * sizeof(Card));
+    if (community == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    
 
     while (fgets(input, sizeof(input), stdin) != NULL) {
         sscanf(input, " %c%c %c%c", &player1[0].value, &player1[0].suit, &player1[1].value,
                &player1[1].suit);
         player1[0].value = card_value(player1[0].value);
         player1[1].value = card_value(player1[1].value);
-
 
         fgets(input, sizeof(input), stdin);
         sscanf(input, " %c%c %c%c", &player2[0].value, &player2[0].suit, &player2[1].value,
@@ -372,10 +389,6 @@ int main(int argc, char **argv) {
         for (int i = 0; i < 5; i++) {
             community[i].value = card_value(community[i].value);
         }
-        if (!validate_cards(player1, 2) || !validate_cards(player2, 2) || !validate_cards(community, 5)) {
-            fprintf(stderr, "invalid card");
-            return -1;
-        }
 
         int result = compare_hands(player1, player2, community);
         if (result > 0) {
@@ -386,5 +399,11 @@ int main(int argc, char **argv) {
             printf("Draw\n");
         }
     }
+
+    free(input);
+    free(player1);
+    free(player2);
+    free(community);
+    
     return 0;
 }
