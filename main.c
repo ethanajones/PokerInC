@@ -346,7 +346,10 @@ int main(int argc, char **argv) {
     (void) players;
 
     char input[1024];
-    Card player1[2], player2[2], community[5];
+    Card player1[2] = {{0}};
+    Card player2[2] = {{0}};
+    Card community[5] = {{0}};
+
 
     while (fgets(input, sizeof(input), stdin) != NULL) {
         char value1, value2;
